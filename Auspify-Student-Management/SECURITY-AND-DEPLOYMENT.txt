@@ -1,0 +1,26 @@
+Auspify Student Management System - security update v2
+
+IMPORTANT
+- This version adds bcrypt password hashing, JWT authentication, and server-side role checks.
+- Existing legacy passwords are upgraded to bcrypt automatically after the user's next successful login. No password needs to be shared with anyone.
+- The users table schema is unchanged: id, username, password, role.
+- Only the existing admin account was found in the supplied database check. Teacher/student logins will not work until those accounts are created by an authorized admin workflow.
+
+RENDER ENVIRONMENT VARIABLES
+Keep the existing DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME values. Add JWT_SECRET with a long random secret (at least 32 characters). Do not put real credentials in this ZIP or source control.
+
+DEPLOYMENT
+1. Upload/deploy this project to the existing backend service.
+2. Ensure Render runs `npm install` and `npm start`.
+3. Add JWT_SECRET in Render Environment.
+4. Redeploy.
+5. Sign in using the existing admin credentials directly on the login page. Do not send the password in chat.
+6. After the first successful login, the legacy password will be replaced with a bcrypt hash automatically.
+
+API ACCESS
+- GET /api/students: admin and teacher
+- Create/update/delete students and Recycle Bin actions: admin only
+- API requests require Authorization: Bearer <token>.
+
+TESTING NOTE
+Static syntax checks do not replace live Aiven/Render testing. Verify login, list, add, edit, recycle/restore and permanent delete after deployment.

@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h1>💰 Expense Tracker</h1>
+        <p>Manage your money smartly</p>
+    </header>
+
+    <main class="container">
+
+        <section class="summary">
+            <div class="summary-card">
+                <h3>Total Balance</h3>
+                <h2 id="balance">₹0.00</h2>
+            </div>
+
+            <div class="summary-card income">
+                <h3>Total Income</h3>
+                <h2 id="income">₹0.00</h2>
+            </div>
+
+            <div class="summary-card expense">
+                <h3>Total Expense</h3>
+                <h2 id="expense">₹0.00</h2>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Add New Transaction</h2>
+
+            <form id="transactionForm">
+                <input type="text" id="title"
+                    placeholder="Enter transaction name" required>
+
+                <input type="number" id="amount"
+                    placeholder="Enter amount" min="0.01" step="0.01" required>
+
+                <select id="type" required>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+
+                <select id="category" required>
+                    <option value="Salary">Salary</option>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Education">Education</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <input type="date" id="date" required>
+
+                <button type="submit">Add Transaction</button>
+            </form>
+        </section>
+
+        <section class="history-section">
+    <h2>Transaction History</h2>
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search transaction..."
+    >
+
+    <select id="filterCategory">
+        <option value="All">All Categories</option>
+        <option value="Salary">Salary</option>
+        <option value="Food">Food</option>
+        <option value="Travel">Travel</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Education">Education</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <div id="transactionList">
+        <p>No transactions yet.</p>
+    </div>
+</section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Expense Tracker | All Rights Reserved</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher Dashboard | Auspify</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#f1f5f9;
+  color:#172554;
+  font-family:Arial,sans-serif;
+}
+header{
+  background:#101b3f;
+  color:white;
+  padding:20px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+header h1{font-size:21px;margin:0}
+button{
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#2456a6;
+  color:white;
+}
+button:hover{opacity:.9}
+.logout{background:#dc2626}
+main{max-width:1150px;margin:30px auto;padding:0 18px}
+.card{
+  background:white;
+  padding:24px;
+  border-radius:14px;
+  box-shadow:0 4px 18px #0f172a0c;
+  margin-bottom:20px;
+}
+.muted{color:#64748b;line-height:1.6}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+}
+.stat{
+  background:#eff6ff;
+  padding:20px;
+  border-radius:12px;
+}
+.stat h2{font-size:30px;margin:8px 0;color:#2456a6}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{
+  padding:13px;
+  border-bottom:1px solid #e2e8f0;
+  text-align:left;
+}
+th{background:#eff6ff}
+input,select{
+  width:100%;
+  padding:11px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  margin:7px 0 15px;
+  background:white;
+}
+label{font-weight:bold;font-size:14px}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+}
+.status-message{color:#64748b;margin-top:12px}
+.small-button{padding:8px 11px}
+.save-button{background:#15803d}
+.section-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+@media(max-width:560px){
+  .card{padding:17px}
+  header{padding:16px 18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Auspify Student Management</h1>
+  <button class="logout" id="logoutButton">Logout</button>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2>Teacher Dashboard</h2>
+    <p class="muted" id="welcome">Welcome, Teacher!</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <p>Total Students</p>
+      <h2 id="totalStudents">0</h2>
+    </div>
+    <div class="stat">
+      <p>Account Role</p>
+      <h2 style="font-size:22px">Teacher</h2>
+    </div>
+  </section>
+
+  <!-- STUDENT RECORDS -->
+  <section class="card" style="margin-top:20px">
+    <div class="section-heading">
+      <h2>Student Records</h2>
+      <button id="refreshButton">Refresh Students</button>
+    </div>
+
+    <p id="studentMessage" class="muted">Loading students...</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Roll Number</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Branch</th>
+            <th>Semester</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ATTENDANCE MANAGEMENT -->
+  <section class="card">
+    <h2>Attendance Management</h2>
+    <p class="muted">Select a date and mark attendance for students.</p>
+
+    <label for="attendanceDate">Attendance Date</label>
+    <input type="date" id="attendanceDate">
+
+    <button id="loadAttendanceButton">Load Attendance</button>
+
+    <p id="attendanceMessage" class="status-message"></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Roll Number</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MARKS MANAGEMENT -->
+  <section class="card">
+    <h2>Marks Management</h2>
+    <p class="muted">Enter examination marks for a student.</p>
+
+    <form id="marksForm">
+      <div class="form-grid">
+
+        <div>
+          <label for="marksStudent">Select Student</label>
+          <select id="marksStudent" required>
+            <option value="">Select Student</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="subject">Subject</label>
+          <input id="subject" type="text"
+                 placeholder="e.g. Mathematics" required>
+        </div>
+
+        <div>
+          <label for="examName">Exam Name</label>
+          <input id="examName" type="text"
+                 placeholder="e.g. Mid Semester" required>
+        </div>
+
+        <div>
+          <label for="maxMarks">Maximum Marks</label>
+          <input id="maxMarks" type="number"
+                 min="0.01" step="0.01" required>
+        </div>
+
+        <div>
+          <label for="obtainedMarks">Marks Obtained</label>
+          <input id="obtainedMarks" type="number"
+                 min="0" step="0.01" required>
+        </div>
+
+      </div>
+
+      <button type="submit" id="saveMarksButton">
+        Save Marks
+      </button>
+    </form>
+
+    <p id="marksMessage" class="status-message"></p>
+
+    <hr style="border:0;border-top:1px solid #e2e8f0;margin:25px 0">
+
+    <div class="section-heading">
+      <h3>Marks Records</h3>
+      <button id="refreshMarksButton">Refresh Marks</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Roll Number</th>
+            <th>Subject</th>
+            <th>Exam</th>
+            <th>Maximum</th>
+            <th>Obtained</th>
+          </tr>
+        </thead>
+        <tbody id="marksTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const user = JSON.parse(
+  sessionStorage.getItem("loggedInUser") || "null"
+);
+const token = sessionStorage.getItem("authToken");
+
+if (!user || user.role !== "teacher" || !token) {
+  window.location.replace("login.html");
+} else {
+  document.getElementById("welcome").textContent =
+    "Welcome, " + (user.username || "Teacher") + "!";
+}
+
+const $ = id => document.getElementById(id);
+
+let studentsList = [];
+
+function authHeaders(){
+  return {
+    "Authorization": "Bearer " + token,
+    "Content-Type": "application/json"
+  };
+}
+
+
+
+  async function apiRequest(url, options = {}) {
+  const response = await fetch("http://localhost:5001" + url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+      ...(options.headers || {})
+    }
+  });
+
+  const responseText = await response.text();
+
+  let data = {};
+  try {
+    data = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    data = { error: responseText || "Server returned an empty response." };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `HTTP ${response.status}: ${data.error || data.message || "Request failed."}`
+    );
+  }
+
+  return data;
+}
+
+
+function addCell(row, value){
+  const td = document.createElement("td");
+  td.textContent = value ?? "-";
+  row.appendChild(td);
+}
+
+// Load students
+async function loadStudents(){
+  $("studentMessage").textContent = "Loading students...";
+  $("studentTable").replaceChildren();
+
+  try {
+    const data = await apiRequest("/api/students");
+    studentsList = Array.isArray(data) ? data : [];
+
+    $("totalStudents").textContent = studentsList.length;
+
+    const select = $("marksStudent");
+    select.replaceChildren();
+
+    const firstOption = document.createElement("option");
+    firstOption.value = "";
+    firstOption.textContent = "Select Student";
+    select.appendChild(firstOption);
+
+    studentsList.forEach(student => {
+      const option = document.createElement("option");
+      option.value = student.id;
+      option.textContent = student.name + " (" + student.roll_no + ")";
+      select.appendChild(option);
+
+      const row = document.createElement("tr");
+
+      [
+        student.id,
+        student.name,
+        student.roll_no,
+        student.email,
+        student.phone,
+        student.branch,
+        student.semester
+      ].forEach(value => addCell(row, value));
+
+      $("studentTable").appendChild(row);
+    });
+
+    $("studentMessage").textContent =
+      studentsList.length ? "" : "No students found.";
+
+  } catch(error) {
+    $("studentMessage").textContent = error.message;
+  }
+}
+
+// Attendance
+function todayLocal(){
+  const d = new Date();
+  const offset = d.getTimezoneOffset();
+  return new Date(d.getTime() - offset * 60000)
+    .toISOString().slice(0,10);
+}
+
+$("attendanceDate").value = todayLocal();
+
+async function loadAttendance(){
+  const date = $("attendanceDate").value;
+
+  if(!date){
+    $("attendanceMessage").textContent = "Please select a date.";
+    return;
+  }
+
+  $("attendanceMessage").textContent = "Loading attendance...";
+  $("attendanceTable").replaceChildren();
+
+  try {
+    const rows = await apiRequest(
+      "/api/attendance?date=" + encodeURIComponent(date)
+    );
+
+    rows.forEach(student => {
+      const row = document.createElement("tr");
+
+      addCell(row, student.name);
+      addCell(row, student.roll_no);
+
+      const statusCell = document.createElement("td");
+      const select = document.createElement("select");
+
+      ["Present","Absent","Late"].forEach(status => {
+        const option = document.createElement("option");
+        option.value = status;
+        option.textContent = status;
+        select.appendChild(option);
+      });
+
+      if(["Present","Absent","Late"].includes(student.status)){
+        select.value = student.status;
+      }
+
+      statusCell.appendChild(select);
+      row.appendChild(statusCell);
+
+      const actionCell = document.createElement("td");
+      const saveButton = document.createElement("button");
+      saveButton.textContent = "Save";
+      saveButton.className = "save-button small-button";
+
+      saveButton.addEventListener("click", async () => {
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+
+        try {
+          await apiRequest("/api/attendance", {
+            method: "POST",
+            body: JSON.stringify({
+              student_id: student.student_id,
+              attendance_date: date,
+              status: select.value
+            })
+          });
+
+          $("attendanceMessage").textContent =
+            "Attendance saved for " + student.name + ".";
+
+        } catch(error) {
+          $("attendanceMessage").textContent = error.message;
+        } finally {
+          saveButton.disabled = false;
+          saveButton.textContent = "Save";
+        }
+      });
+
+      actionCell.appendChild(saveButton);
+      row.appendChild(actionCell);
+
+      $("attendanceTable").appendChild(row);
+    });
+
+    $("attendanceMessage").textContent =
+      rows.length ? "Attendance loaded successfully." : "No students found.";
+
+  } catch(error) {
+    $("attendanceMessage").textContent = error.message;
+  }
+}
+
+// Add marks
+$("marksForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const student_id = $("marksStudent").value;
+  const subject = $("subject").value.trim();
+  const exam_name = $("examName").value.trim();
+  const max_marks = $("maxMarks").value;
+  const marks_obtained = $("obtainedMarks").value;
+
+  if(!student_id){
+    $("marksMessage").textContent = "Please select a student.";
+    return;
+  }
+
+  if(Number(marks_obtained) > Number(max_marks)){
+    $("marksMessage").textContent =
+      "Obtained marks cannot exceed maximum marks.";
+    return;
+  }
+
+  $("saveMarksButton").disabled = true;
+  $("saveMarksButton").textContent = "Saving...";
+
+  try {
+    const result = await apiRequest("/api/marks", {
+      method: "POST",
+      body: JSON.stringify({
+        student_id: Number(student_id),
+        subject,
+        exam_name,
+        max_marks,
+        marks_obtained
+      })
+    });
+
+    $("marksMessage").textContent = result.message;
+    $("marksForm").reset();
+
+    await loadMarks();
+
+  } catch(error) {
+    $("marksMessage").textContent = error.message;
+  } finally {
+    $("saveMarksButton").disabled = false;
+    $("saveMarksButton").textContent = "Save Marks";
+  }
+});
+
+// View marks
+async function loadMarks(){
+  $("marksTable").replaceChildren();
+  $("marksMessage").textContent = "Loading marks...";
+
+  try {
+    const rows = await apiRequest("/api/marks");
+
+    rows.forEach(mark => {
+      const row = document.createElement("tr");
+
+      [
+        mark.name,
+        mark.roll_no,
+        mark.subject,
+        mark.exam_name,
+        mark.max_marks,
+        mark.marks_obtained
+      ].forEach(value => addCell(row, value));
+
+      $("marksTable").appendChild(row);
+    });
+
+    $("marksMessage").textContent =
+      rows.length ? "Marks records loaded." : "No marks records found.";
+
+  } catch(error) {
+    $("marksMessage").textContent = error.message;
+  }
+}
+
+$("refreshButton").addEventListener("click", loadStudents);
+$("loadAttendanceButton").addEventListener("click", loadAttendance);
+$("refreshMarksButton").addEventListener("click", loadMarks);
+
+$("logoutButton").addEventListener("click", () => {
+  sessionStorage.removeItem("loggedInUser");
+  sessionStorage.removeItem("authToken");
+  window.location.replace("login.html");
+});
+
+if(user && user.role === "teacher" && token){
+  loadStudents();
+  loadAttendance();
+  loadMarks();
+}
+</script>
+
+</body>
+</html>
